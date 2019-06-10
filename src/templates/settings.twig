@@ -1,0 +1,48 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * airbrake plugin for Craft CMS 3.x
+ *
+ * airbrake Settings.twig
+ *
+ * @author    One Design Company
+ * @copyright Copyright (c) 2019 One Design Company
+ * @link      https://onedesigncompany.com
+ * @package   Airbrake
+ * @since     0.0.1
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("onedesign\\airbrake\\assetbundles\\airbrake\\AirbrakeAsset") %}
+
+<p>These settings are set in <code>config/airbrake.php</code>. You cannot edit them here.</p>
+
+{{ forms.lightswitchField({
+    label: 'Enabled',
+    instructions: 'This is the global on/off switch. Turn on to send errors to Airbrake.',
+    id: 'enabled',
+    name: 'enabled',
+    disabled: true,
+    on: settings['enabled']})
+}}
+
+{{ forms.textField({
+    label: 'Project ID',
+    instructions: 'This is the project ID from airbrake.io.',
+    id: 'projectId',
+    name: 'projectId',
+    disabled: true,
+    value: settings['projectId']})
+}}
+
+{{ forms.textField({
+    label: 'Project Key',
+    instructions: 'This is the project Key from airbrake.io.',
+    id: 'projectKey',
+    name: 'projectKey',
+    disabled: true,
+    value: settings['projectKey']})
+}}
+
