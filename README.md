@@ -1,12 +1,10 @@
 # Airbrake plugin for Craft CMS 3.x
 
-Log Craft errors to airbrake.io
-
-![Screenshot](resources/img/plugin-logo.png)
+Logs Craft 3 server-side errors to airbrake.io.
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
+This plugin requires Craft CMS 3.0.0 or later and an account on airbrake.io.
 
 ## Installation
 

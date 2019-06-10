@@ -1,6 +1,6 @@
 {
     "name": "onedesign/airbrake-craft",
-    "description": "Logs errors to airbrake.io",
+    "description": "Logs Craft 3 server-side errors to airbrake.io.",
     "type": "craft-plugin",
     "version": "1.0.0",
     "keywords": [
@@ -11,8 +11,8 @@
         "airbrake"
     ],
     "support": {
-        "docs": "https://github.com/onedesign/airbrake/blob/master/README.md",
-        "issues": "https://github.com/onedesign/airbrake/issues"
+        "docs": "https://github.com/onedesign/airbrake-craft/blob/master/README.md",
+        "issues": "https://github.com/onedesign/airbrake-craft/issues"
     },
     "license": "MIT",
     "authors": [
@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0-RC1",
+        "craftcms/cms": "^3.0.0",
         "airbrake/phpbrake": "^0.6.0"
     },
     "autoload": {
@@ -35,7 +35,7 @@
         "handle": "airbrake",
         "hasCpSettings": true,
         "hasCpSection": false,
-        "changelogUrl": "https://raw.githubusercontent.com/onedesign/airbrake/master/CHANGELOG.md",
+        "changelogUrl": "https://raw.githubusercontent.com/onedesign/airbrake-craft/master/CHANGELOG.md",
         "class": "onedesign\\airbrake\\Airbrake"
     }
 }
