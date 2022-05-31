@@ -20,29 +20,26 @@
 <p>These settings are set in <code>config/airbrake.php</code>. You cannot edit them here.</p>
 
 {{ forms.lightswitchField({
-    label: 'Enabled',
-    instructions: 'This is the global on/off switch. Turn on to send errors to Airbrake.',
-    id: 'enabled',
-    name: 'enabled',
-    disabled: true,
-    on: settings['enabled']})
-}}
+  label: 'Enabled',
+  instructions: 'This is the global on/off switch. Turn on to send errors to Airbrake.',
+  id: 'enabled',
+  name: 'enabled',
+  disabled: true,
+  on: settings['enabled']}) }}
 
 {{ forms.textField({
-    label: 'Project ID',
-    instructions: 'This is the project ID from airbrake.io.',
-    id: 'projectId',
-    name: 'projectId',
-    disabled: true,
-    value: settings['projectId']})
-}}
+  label: 'Project ID',
+  instructions: 'This is the project ID from airbrake.io.',
+  id: 'projectId',
+  name: 'projectId',
+  disabled: true,
+  value: settings['projectId']}) }}
 
 {{ forms.textField({
-    label: 'Project Key',
-    instructions: 'This is the project Key from airbrake.io.',
-    id: 'projectKey',
-    name: 'projectKey',
-    disabled: true,
-    value: settings['projectKey']})
-}}
+  label: 'Project Key',
+  instructions: 'This is the project Key from airbrake.io.',
+  id: 'projectKey',
+  name: 'projectKey',
+  disabled: true,
+  value: settings['projectKey']}) }}
 

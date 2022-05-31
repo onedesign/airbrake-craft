@@ -10,14 +10,14 @@
 
 namespace onedesign\airbrake;
 
-use onedesign\airbrake\models\Settings;
-use onedesign\airbrake\targets\AirbrakeTarget;
-
+use Airbrake\Instance;
+use Airbrake\Notifier;
 use Craft;
 use craft\base\Plugin;
-use craft\services\Plugins;
 use craft\events\PluginEvent;
-
+use craft\services\Plugins;
+use onedesign\airbrake\models\Settings;
+use onedesign\airbrake\targets\AirbrakeTarget;
 use yii\base\Event;
 
 /**
@@ -60,7 +60,7 @@ class Airbrake extends Plugin
         Event::on(
             Plugins::class,
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
+            function(PluginEvent $event) {
                 if ($event->plugin === $this) {
                 }
             }
@@ -83,10 +83,10 @@ class Airbrake extends Plugin
                 $settings['rootDirectory'] = $this->settings->rootDirectory;
             }
 
-            $notifier = new \Airbrake\Notifier($settings);
+            $notifier = new Notifier($settings);
 
             // Adds the Craft user's info to the notice
-            $notifier->addFilter(function ($notice) {
+            $notifier->addFilter(function($notice) {
                 $user = Craft::$app->getUser()->getIdentity();
                 if ($user) {
                     $notice['context']['user']['email'] = $user->email;
@@ -96,7 +96,7 @@ class Airbrake extends Plugin
                 return $notice;
             });
 
-            \Airbrake\Instance::set($notifier);
+            Instance::set($notifier);
 
             Craft::getLogger()->dispatcher->targets[] = $airbrakeTarget;
         }

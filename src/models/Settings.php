@@ -10,9 +10,6 @@
 
 namespace onedesign\airbrake\models;
 
-use onedesign\airbrake\Airbrake;
-
-use Craft;
 use craft\base\Model;
 
 /**
