@@ -57,15 +57,6 @@ class Airbrake extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function(PluginEvent $event) {
-                if ($event->plugin === $this) {
-                }
-            }
-        );
-
         if ($this->settings->enabled) {
             $airbrakeTarget = new AirbrakeTarget();
             $airbrakeTarget->setLevels($this->settings->levels);
