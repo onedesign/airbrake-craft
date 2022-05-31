@@ -3,18 +3,10 @@
 namespace onedesign\airbrake\targets;
 
 use Airbrake;
-use Exception;
+use onedesign\airbrake\Airbrake as AirbrakeService;
 use yii\base\InvalidConfigException;
 use yii\log\Logger;
 use yii\log\Target;
-
-class StringError extends Exception
-{
-}
-
-class ArrayError extends Exception
-{
-}
 
 /**
  * Docs https://www.yiiframework.com/doc/api/2.0/yii-log-target
@@ -94,39 +86,59 @@ class AirbrakeTarget extends Target
      */
     public function export()
     {
-        foreach ($this->messages as $message) {
-            $level = $message[1];
+        foreach ($this->messages as [$content, $level, $category, $timestamp, $traces]) {
             if (!isset($this->_levels[$level])) {
                 continue;
             }
 
             // Filters out context message cause it just results in a duplicate in airbrake
-            if ($message[0] == $this->getContextMessage()) {
+            if ($content == $this->getContextMessage()) {
                 continue;
             }
 
-            if ($this->categoryIsExcluded($message[2])) {
+            if ($this->categoryIsExcluded($category)) {
                 continue;
             }
 
-            if ($this->typeIsExcluded($message[0])) {
+            if ($this->typeIsExcluded($content)) {
                 continue;
             }
 
-            // The Airbrake library expects a throwable class
-            if (is_string($message[0])) {
-                $error = new StringError($message[0]);
-            } elseif (is_array($message[0])) {
-                $error = new ArrayError(implode("\n", $message[0]));
+            if ($content instanceof \Throwable) {
+                $airbrakeNotice = AirbrakeService::$plugin->airbrake->buildNotice($content);
             } else {
-                $error = $message[0];
+                $customError = $this->buildCustomError($content, $level, $traces);
+                AirbrakeService::$plugin->airbrake->buildNotice($customError);
             }
 
-            if ($this->_debug == true) {
-                error_log($level . ': ' . get_class($error) . ': ' . $error->getMessage() . "\n", 3, '/tmp/airbrake.log');
-            } else {
-                Airbrake\Instance::notify($error);
+            $airbrakeNotice['context']['severity'] = Logger::getLevelName($level);
+            $airbrakeNotice['context']['category'] = $category;
+            $airbrakeNotice['context']['timestamp'] = date('Y-m-d H:i:s', $timestamp);
+
+            if ($airbrakeNotice !== null) {
+                AirbrakeService::$plugin->airbrake->sendNotice($airbrakeNotice);
             }
+        }
+    }
+
+    /**
+     * @param $content
+     * @param $level
+     * @param array $traces
+     * @return Airbrake\Errors\Error|Airbrake\Errors\Notice|Airbrake\Errors\Warning
+     */
+    protected function buildCustomError($content, $level, array $traces)
+    {
+        switch ($level) {
+            case Logger::LEVEL_ERROR:
+                return new Airbrake\Errors\Error($content, $traces);
+            case Logger::LEVEL_WARNING:
+                return new Airbrake\Errors\Warning($content, $traces);
+            case Logger::LEVEL_INFO:
+            case Logger::LEVEL_PROFILE:
+            case Logger::LEVEL_TRACE:
+            default:
+                return new Airbrake\Errors\Notice($content, $traces);
         }
     }
 
@@ -137,7 +149,7 @@ class AirbrakeTarget extends Target
      * @param mixed $obj
      * @return boolean
      */
-    private function typeIsExcluded($obj)
+    private function typeIsExcluded($obj): bool
     {
         foreach ($this->excludedTypes as $type) {
             if ($obj instanceof $type) {
@@ -154,7 +166,7 @@ class AirbrakeTarget extends Target
      * @param mixed string
      * @return boolean
      */
-    private function categoryIsExcluded($categoryToCheck)
+    private function categoryIsExcluded($categoryToCheck): bool
     {
         foreach ($this->excludedCategories as $category) {
             if ($category === $categoryToCheck) {
@@ -194,21 +206,21 @@ class AirbrakeTarget extends Target
             'profile' => Logger::LEVEL_PROFILE,
         ];
         if (is_array($levels)) {
-            $intrestingLevels = [];
+            $interestingLevels = [];
 
             foreach ($levels as $level) {
                 if (!isset($this->_levels[$level]) && !isset($levelMap[$level])) {
                     throw new InvalidConfigException("Unrecognized level: $level");
                 }
                 if (isset($levelMap[$level])) {
-                    $intrestingLevels[$levelMap[$level]] = $this->_levels[$levelMap[$level]];
+                    $interestingLevels[$levelMap[$level]] = $this->_levels[$levelMap[$level]];
                 }
                 if (isset($this->_levels[$level])) {
-                    $intrestingLevels[$level] = $this->_levels[$level];
+                    $interestingLevels[$level] = $this->_levels[$level];
                 }
             }
 
-            $this->_levels = $intrestingLevels;
+            $this->_levels = $interestingLevels;
         } else {
             throw new InvalidConfigException("Incorrect $levels value");
         }
