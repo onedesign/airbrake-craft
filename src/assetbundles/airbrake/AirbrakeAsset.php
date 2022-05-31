@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2019 One Design Company
  */
 
-namespace onedesign\airbrake\assetbundles\Airbrake;
+namespace onedesign\airbrake\assetbundles\airbrake;
 
 use Craft;
 use craft\web\AssetBundle;
